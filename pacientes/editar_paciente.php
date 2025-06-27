@@ -1,8 +1,6 @@
 <?php
-// 1. Incluir la conexión
 require_once '../conexion.php';
 
-// 2. Comprobar que hemos recibido el RUT por GET
 if (!isset($_GET['rut'])) {
     header('Location: listar_pacientes.php');
     exit();
@@ -10,7 +8,7 @@ if (!isset($_GET['rut'])) {
 
 $rut_a_editar = $_GET['rut'];
 
-// 3. Preparar la consulta para obtener los datos del paciente
+// Obtener los datos del paciente a editar
 $sql = "SELECT Rut, Nombre, Email FROM Paciente WHERE Rut = ?";
 $stmt = $conexion->prepare($sql);
 
@@ -18,12 +16,10 @@ if ($stmt === false) {
     die("Error al preparar la consulta: " . $conexion->error);
 }
 
-// 4. Vincular el RUT y ejecutar
 $stmt->bind_param("s", $rut_a_editar);
 $stmt->execute();
 $resultado = $stmt->get_result();
 
-// 5. Comprobar si el paciente existe
 if ($resultado->num_rows === 0) {
     echo "Paciente no encontrado.";
     $stmt->close();
@@ -31,11 +27,9 @@ if ($resultado->num_rows === 0) {
     exit();
 }
 
-// 6. Obtener los datos del paciente
 $paciente = $resultado->fetch_assoc();
 
 $stmt->close();
-// No cerramos la conexión principal todavía, la usaremos más adelante si es necesario.
 ?>
 
 <!DOCTYPE html>
@@ -44,7 +38,6 @@ $stmt->close();
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Editar Paciente</title>
-    <!-- Usamos los mismos estilos que en tu formulario de nuevo paciente -->
     <style>
         body { font-family: sans-serif; line-height: 1.6; }
         form { max-width: 500px; margin: 20px auto; padding: 20px; border: 1px solid #ccc; border-radius: 8px; }
@@ -59,11 +52,9 @@ $stmt->close();
 
     <h1>Editar Paciente</h1>
 
-    <!-- El formulario envía los datos a 'actualizar_paciente.php' usando POST -->
     <form action="actualizar_paciente.php" method="POST">
 
         <label for="rut">RUT del Paciente (no se puede cambiar):</label>
-        <!-- El RUT no se debe poder editar, así que lo ponemos como 'readonly' -->
         <input type="text" id="rut" name="rut" value="<?php echo htmlspecialchars($paciente['Rut']); ?>" readonly>
 
         <label for="nombre">Nombre Completo:</label>

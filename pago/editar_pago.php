@@ -1,8 +1,6 @@
 <?php
-// 1. Incluir la conexión
 require_once '../conexion.php';
 
-// 2. Comprobar que hemos recibido el ID por GET
 if (!isset($_GET['ID_FormaPago'])) {
     header('Location: listar_pago.php');
     exit();
@@ -10,7 +8,6 @@ if (!isset($_GET['ID_FormaPago'])) {
 
 $ID_FormaPago_a_editar = $_GET['ID_FormaPago'];
 
-// 3. Preparar la consulta para obtener los datos del paciente
 $sql = "SELECT ID_FormaPago, Descripcion FROM FormaPago WHERE ID_FormaPago = ?";
 $stmt = $conexion->prepare($sql);
 
@@ -18,12 +15,10 @@ if ($stmt === false) {
     die("Error al preparar la consulta: " . $conexion->error);
 }
 
-// 4. Vincular el RUT y ejecutar
 $stmt->bind_param("s", $ID_FormaPago_a_editar);
 $stmt->execute();
 $resultado = $stmt->get_result();
 
-// 5. Comprobar si el paciente existe
 if ($resultado->num_rows === 0) {
     echo "Metodo de Pago no encontrado.";
     $stmt->close();
@@ -31,11 +26,9 @@ if ($resultado->num_rows === 0) {
     exit();
 }
 
-// 6. Obtener los datos del metodo de pago
 $pago = $resultado->fetch_assoc();
 
 $stmt->close();
-// No cerramos la conexión principal todavía, la usaremos más adelante si es necesario.
 ?>
 
 <!DOCTYPE html>
@@ -44,7 +37,6 @@ $stmt->close();
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Editar Metodo de Pago</title>
-    <!-- Usamos los mismos estilos que en tu formulario de nuevo paciente -->
     <style>
         body { font-family: sans-serif; line-height: 1.6; }
         form { max-width: 500px; margin: 20px auto; padding: 20px; border: 1px solid #ccc; border-radius: 8px; }
@@ -59,17 +51,13 @@ $stmt->close();
 
     <h1>Editar Metodo de Pago</h1>
 
-        <!-- El formulario envía los datos a 'actualizar_especialista.php' usando POST -->
     <form action="actualizar_pago.php" method="POST">
-
         <label for="ID_FormaPago">ID del Metodo de Pago (no se puede cambiar):</label>
-        <!-- El ID no se debe poder editar, así que lo ponemos como 'readonly' -->
         <input type="text" id="ID_FormaPago" name="ID_FormaPago" value="<?php echo htmlspecialchars($pago['ID_FormaPago']); ?>" readonly>
 
         <label for="Descripcion">Descripcion:</label>
         <input type="text" id="Descripcion" name="Descripcion" value="<?php echo htmlspecialchars($pago['Descripcion']); ?>" required>
 
-        
         <input type="submit" value="Guardar Cambios">
     </form>
 

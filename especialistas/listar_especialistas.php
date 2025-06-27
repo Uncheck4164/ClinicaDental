@@ -1,6 +1,4 @@
 <?php
- // phpcs:ignore PEAR.Commenting.FileComment.WrongStyle
-// (El código PHP de arriba para conectar y consultar sigue siendo el mismo)
 require_once '../conexion.php';
 $sql = "SELECT id_especialista, nombre FROM Especialista ORDER BY nombre ASC";
 $resultado = $conexion->query($sql);
@@ -15,6 +13,22 @@ $resultado = $conexion->query($sql);
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
+<?php
+if (isset($_GET['status'])) {
+    $msg = '';
+    if ($_GET['status'] === 'success') {
+        $msg = 'editado con éxito.';
+    } elseif ($_GET['status'] === 'deleted') {
+        $msg = 'eliminado con éxito.';
+    }
+    if ($msg) {
+        echo '<div class="custom-notification" id="notif-success">'
+            . '<span>' . $msg . '</span>'
+            . '<button class="close-btn" onclick="document.getElementById(\'notif-success\').style.display=\'none\';">&times;</button>'
+            . '</div>';
+    }
+}
+?>
 <aside class="sidebar">
                 <div class="sidebar-header">
                     <div class="logo">
@@ -38,13 +52,12 @@ $resultado = $conexion->query($sql);
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a href="../pacientes/listar_pacientes.php" class="nav-link"> <!-- Asumiendo una ruta futura -->
-                                <i class="fas fa-users"></i>
+                            <a href="../pacientes/listar_pacientes.php" class="nav-link">
                                 <span>Pacientes</span>
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a href="../tratamientos/listar_tratamientos.php" class="nav-link"> <!-- Asumiendo una ruta futura -->
+                            <a href="../tratamientos/listar_tratamientos.php" class="nav-link">
                                 <i class="fas fa-tooth"></i>
                                 <span>Tratamientos</span>
                             </a>

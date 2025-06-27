@@ -1,7 +1,6 @@
 <?php
 require_once '../conexion.php';
 
-// Consulta con JOIN para obtener el nombre del especialista en lugar de su ID
 $sql = "SELECT 
             T.ID_Tratamiento, 
             T.Nombre AS NombreTratamiento, 
@@ -26,6 +25,22 @@ $resultado = $conexion->query($sql);
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
+<?php
+if (isset($_GET['status'])) {
+    $msg = '';
+    if ($_GET['status'] === 'success') {
+        $msg = 'editado con éxito.';
+    } elseif ($_GET['status'] === 'deleted') {
+        $msg = 'eliminado con éxito.';
+    }
+    if ($msg) {
+        echo '<div class="custom-notification" id="notif-success">'
+            . '<span>' . $msg . '</span>'
+            . '<button class="close-btn" onclick="document.getElementById(\'notif-success\').style.display=\'none\';">&times;</button>'
+            . '</div>';
+    }
+}
+?>
     <aside class="sidebar">
                 <div class="sidebar-header">
                     <div class="logo">
@@ -102,7 +117,6 @@ $resultado = $conexion->query($sql);
                     
                     // Celda con los botones de Editar y Eliminar
                     echo "<td>";
-                    // Adapta estos enlaces a tus futuros archivos de editar/eliminar tratamiento
                     echo "<a href='editar_tratamiento.php?id_tratamiento=" . urlencode($fila['ID_Tratamiento']) . "' class='btn-editar'>Editar</a>";
                     echo "<a href='eliminar_tratamiento.php?id_tratamiento=" . urlencode($fila['ID_Tratamiento']) . "' class='btn-eliminar' onclick='return confirm(\"¿Seguro?\");'>Eliminar</a>";
                     echo "</td>";

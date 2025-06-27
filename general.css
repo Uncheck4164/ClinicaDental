@@ -10,6 +10,7 @@ body {
     color: #333;
     display: flex;
 }
+
 .sidebar {
     width: 260px;
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
@@ -94,3 +95,33 @@ p a {
 h1 {
     padding-bottom: 2rem;
 }
+
+
+.custom-notification {
+    position: fixed;
+    top: 30px;
+    right: 30px;
+    background: #28a745;
+    color: #fff;
+    padding: 16px 32px 16px 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+    z-index: 9999;
+    font-size: 1.1em;
+    display: flex;
+    align-items: center;
+    min-width: 220px;
+  }
+  .custom-notification .close-btn {
+    background: none;
+    border: none;
+    color: #fff;
+    font-size: 1.5em;
+    margin-left: 16px;
+    cursor: pointer;
+    line-height: 1;
+    padding: 0;
+  }
+  .custom-notification .close-btn:hover {
+    color: #ffd700;
+  }

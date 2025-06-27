@@ -1,10 +1,9 @@
 <?php
 require_once '../conexion.php';
 
-// Consulta 100% corregida para coincidir con tu diagrama de base de datos real.
 $sql = "
     SELECT
-        a.ID_Atencion,          -- CORRECCIÓN 1: El nombre de la columna es ID_Atencion (sin 'n' extra)
+        a.ID_Atencion,
         a.Fecha,
         p.Nombre AS NombrePaciente,
         t.Nombre AS NombreTratamiento,
@@ -14,11 +13,11 @@ $sql = "
     FROM
         Atencion AS a
     INNER JOIN
-        Paciente AS p ON a.RUT_Paciente = p.RUT -- Nota: Asegúrate que el caso de 'RUT_Paciente' y 'RUT' coincida.
+        Paciente AS p ON a.RUT_Paciente = p.RUT
     INNER JOIN
         Tratamiento AS t ON a.ID_Tratamiento = t.ID_Tratamiento
-    LEFT JOIN -- Se usa LEFT JOIN por si un tratamiento no tuviera especialista asignado, la fila igual se mostrará.
-        Especialista AS e ON t.ID_Especialista = e.ID_Especialista -- CORRECCIÓN 2: La FK es ID_Especialista (sin 'i' extra)
+    LEFT JOIN
+        Especialista AS e ON t.ID_Especialista = e.ID_Especialista
     INNER JOIN
         FormaPago AS fp ON a.ID_FormaPago = fp.ID_FormaPago
     ORDER BY
@@ -28,7 +27,6 @@ $sql = "
 $resultado = $conexion->query($sql);
 
 if (!$resultado) {
-    // Si la consulta falla, esto nos dirá exactamente por qué.
     die("Error en la consulta SQL: " . $conexion->error);
 }
 ?>
@@ -42,6 +40,22 @@ if (!$resultado) {
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
+<?php
+if (isset($_GET['status'])) {
+    $msg = '';
+    if ($_GET['status'] === 'success') {
+        $msg = 'editado con éxito.';
+    } elseif ($_GET['status'] === 'deleted') {
+        $msg = 'eliminado con éxito.';
+    }
+    if ($msg) {
+        echo '<div class="custom-notification" id="notif-success">'
+            . '<span>' . $msg . '</span>'
+            . '<button class="close-btn" onclick="document.getElementById(\'notif-success\').style.display=\'none\';">&times;</button>'
+            . '</div>';
+    }
+}
+?>
 <aside class="sidebar">
                 <div class="sidebar-header">
                     <div class="logo">
@@ -65,13 +79,13 @@ if (!$resultado) {
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a href="../pacientes/listar_pacientes.php" class="nav-link"> <!-- Asumiendo una ruta futura -->
+                            <a href="../pacientes/listar_pacientes.php" class="nav-link">
                                 <i class="fas fa-users"></i>
                                 <span>Pacientes</span>
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a href="../tratamientos/listar_tratamientos.php" class="nav-link"> <!-- Asumiendo una ruta futura -->
+                            <a href="../tratamientos/listar_tratamientos.php" class="nav-link">
                                 <i class="fas fa-tooth"></i>
                                 <span>Tratamientos</span>
                             </a>
@@ -93,7 +107,6 @@ if (!$resultado) {
             </aside>
     <div class="container">
         <h1>Listado de Atenciones</h1>
-        <!-- Corregido el enlace para apuntar a tu formulario real -->
         <p><a href="formulario_atencion.php" class="btn-crear">Registrar Nueva Atención</a></p>
 
         <table>
@@ -118,12 +131,10 @@ if (!$resultado) {
                         echo "<td>" . htmlspecialchars($fecha_formateada) . "</td>";
                         echo "<td>" . htmlspecialchars($fila['NombrePaciente']) . "</td>";
                         echo "<td>" . htmlspecialchars($fila['NombreTratamiento']) . "</td>";
-                        // Mostramos 'No asignado' si no hay especialista
                         echo "<td>" . htmlspecialchars($fila['NombreEspecialista'] ?? 'No asignado') . "</td>";
                         echo "<td>" . htmlspecialchars($fila['FormaDePago']) . "</td>";
                         echo "<td class='text-right'>$" . number_format($fila['Valor'], 0, ',', '.') . "</td>";
                         echo "<td>";
-                        // Se corrige el ID a ID_Atencion (sin 'n') para los enlaces
                         echo "<a href='editar_atencion.php?id=" . urlencode($fila['ID_Atencion']) . "' class='btn-editar'>Editar</a>";
                         echo "<a href='eliminar_atencion.php?id=" . urlencode($fila['ID_Atencion']) . "' class='btn-eliminar' onclick='return confirm(\"¿Estás seguro de que deseas eliminar esta atención?\");'>Eliminar</a>";
                         echo "</td>";

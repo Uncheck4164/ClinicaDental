@@ -3,7 +3,6 @@ require_once '../conexion.php';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
-    // 3. Recoger los datos del formulario
     $id_tratamiento = $_POST['id_tratamiento'];
     $nombre = $_POST['nombre'];
     $valor = $_POST['valor'];
@@ -21,13 +20,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         die("Error al preparar la consulta de actualización: " . $conexion->error);
     }
     
-    // 5. Vincular los nuevos datos y el ID a la consulta
-    // 's' para nombre (string), 'd' para valor (double/decimal), 'i' para IDs (integer)
-    // El orden debe coincidir con los '?' en la consulta SQL
     $stmt->bind_param("sdii", $nombre, $valor, $id_especialista, $id_tratamiento);
     
     if ($stmt->execute()) {
-        header('Location: listar_tratamientos.php?status=updated');
+        header('Location: listar_tratamientos.php?status=success');
         exit();
     } else {
         echo "Error al actualizar el tratamiento: " . $stmt->error;

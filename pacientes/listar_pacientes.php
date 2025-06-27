@@ -1,6 +1,5 @@
 <?php
  // phpcs:ignore PEAR.Commenting.FileComment.WrongStyle
-// (El código PHP de arriba para conectar y consultar sigue siendo el mismo)
 require_once '../conexion.php';
 $sql = "SELECT Rut, Nombre, Email FROM Paciente ORDER BY Nombre ASC";
 $resultado = $conexion->query($sql);
@@ -15,6 +14,22 @@ $resultado = $conexion->query($sql);
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
+<?php
+if (isset($_GET['status'])) {
+    $msg = '';
+    if ($_GET['status'] === 'success') {
+        $msg = 'editado con éxito.';
+    } elseif ($_GET['status'] === 'deleted') {
+        $msg = 'eliminado con éxito.';
+    }
+    if ($msg) {
+        echo '<div class="custom-notification" id="notif-success">'
+            . '<span>' . $msg . '</span>'
+            . '<button class="close-btn" onclick="document.getElementById(\'notif-success\').style.display=\'none\';">&times;</button>'
+            . '</div>';
+    }
+}
+?>
 <aside class="sidebar">
                 <div class="sidebar-header">
                     <div class="logo">
@@ -38,13 +53,13 @@ $resultado = $conexion->query($sql);
                             </a>
                         </li>
                         <li class="nav-item active">
-                            <a href="../pacientes/listar_pacientes.php" class="nav-link"> <!-- Asumiendo una ruta futura -->
+                            <a href="../pacientes/listar_pacientes.php" class="nav-link">
                                 <i class="fas fa-users"></i>
                                 <span>Pacientes</span>
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a href="../tratamientos/listar_tratamientos.php" class="nav-link"> <!-- Asumiendo una ruta futura -->
+                            <a href="../tratamientos/listar_tratamientos.php" class="nav-link">
                                 <i class="fas fa-tooth"></i>
                                 <span>Tratamientos</span>
                             </a>
@@ -75,7 +90,7 @@ $resultado = $conexion->query($sql);
                 <th>RUT</th>
                 <th>Nombre Completo</th>
                 <th>Email</th>
-                <th>Acciones</th> <!-- Nueva columna -->
+                <th>Acciones</th>
             </tr>
         </thead>
         <tbody>
@@ -86,15 +101,10 @@ $resultado = $conexion->query($sql);
                     echo "<td>" . htmlspecialchars($fila['Rut']) . "</td>";
                     echo "<td>" . htmlspecialchars($fila['Nombre']) . "</td>";
                     echo "<td>" . htmlspecialchars($fila['Email']) . "</td>";
-                    
-                    // --- AQUÍ ESTÁ LA MAGIA ---
-                    // Celda con los botones de Editar y Eliminar
                     echo "<td>";
                     echo "<a href='editar_paciente.php?rut=" . urlencode($fila['Rut']) . "' class='btn-editar'>Editar</a>";
                     echo "<a href='eliminar_paciente.php?rut=" . urlencode($fila['Rut']) . "' class='btn-eliminar' onclick='return confirm(\"¿Estás seguro de que deseas eliminar a este paciente?\");'>Eliminar</a>";
                     echo "</td>";
-                    // --- FIN DE LA MAGIA ---
-
                     echo "</tr>";
                 }
             } else {
@@ -105,5 +115,12 @@ $resultado = $conexion->query($sql);
         </tbody>
     </table>
         </div>
+<script>
+// cerrar automáticamente después de unos segundos
+setTimeout(function() {
+  var notif = document.getElementById('notif-success');
+  if (notif) notif.style.display = 'none';
+}, 4000);
+</script>
 </body>
 </html>

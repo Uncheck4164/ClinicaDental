@@ -1,14 +1,12 @@
 <?php
 require_once '../conexion.php';
 
-// Verificar que se ha proporcionado un ID
 if (!isset($_GET['id'])) {
     die("ID de atención no proporcionado.");
 }
 
 $id_atencion = (int)$_GET['id'];
 
-// --- 1. Obtener los datos de la atención específica que se va a editar ---
 $sql_atencion = "SELECT * FROM Atencion WHERE ID_Atencion = ?";
 $stmt_atencion = $conexion->prepare($sql_atencion);
 $stmt_atencion->bind_param("i", $id_atencion);
@@ -17,12 +15,10 @@ $resultado_atencion = $stmt_atencion->get_result();
 $atencion = $resultado_atencion->fetch_assoc();
 $stmt_atencion->close();
 
-// Si no se encuentra la atención, terminar el script
 if (!$atencion) {
     die("Atención no encontrada.");
 }
 
-// --- 2. Obtener las listas para los menús desplegables (igual que en el formulario de creación) ---
 $sql_pacientes = "SELECT Rut, Nombre FROM Paciente ORDER BY Nombre ASC";
 $resultado_pacientes = $conexion->query($sql_pacientes);
 
@@ -38,7 +34,6 @@ $resultado_formaspago = $conexion->query($sql_formaspago);
 <head>
     <meta charset="UTF-8">
     <title>Editar Atención</title>
-    <!-- Usamos los mismos estilos del formulario de creación -->
     <style>
         body { font-family: sans-serif; line-height: 1.6; }
         form { max-width: 500px; margin: 20px auto; padding: 20px; border: 1px solid #ccc; border-radius: 8px; }
@@ -52,10 +47,8 @@ $resultado_formaspago = $conexion->query($sql_formaspago);
 <body>
     <h1>Editar Atención (ID: <?php echo htmlspecialchars($id_atencion); ?>)</h1>
 
-    <!-- El formulario envía los datos a un nuevo script: actualizar_atencion.php -->
     <form action="actualizar_atencion.php" method="POST">
 
-        <!-- CAMPO OCULTO: Es VITAL para saber qué registro actualizar -->
         <input type="hidden" name="id_atencion" value="<?php echo htmlspecialchars($atencion['ID_Atencion']); ?>">
 
         <label for="rut_paciente">Paciente:</label>
@@ -96,7 +89,6 @@ $resultado_formaspago = $conexion->query($sql_formaspago);
     </form>
     
     <script>
-        // Script para mostrar el monto del tratamiento (igual que en el formulario de creación)
         const selectTratamiento = document.getElementById('id_tratamiento');
         const spanMonto = document.getElementById('monto-a-pagar');
 
@@ -113,7 +105,6 @@ $resultado_formaspago = $conexion->query($sql_formaspago);
 
         selectTratamiento.addEventListener('change', actualizarMonto);
         
-        // Ejecutar una vez al cargar la página para mostrar el monto del tratamiento ya seleccionado
         document.addEventListener('DOMContentLoaded', actualizarMonto);
     </script>
 

@@ -1,26 +1,19 @@
 <?php
-// 1. CONEXIÓN Y CONSULTAS A LA BASE DE DATOS
-// ===========================================
-require_once 'conexion.php'; // o '../conexion.php' si este archivo está en la carpeta 'atencion/'
 
-// --- Tarjetas de Estadísticas (KPIs) ---
+require_once 'conexion.php'; 
 
-// KPI 1: Atenciones para el día de hoy
 $sql_citas_hoy = "SELECT COUNT(ID_Atencion) AS total FROM Atencion WHERE DATE(Fecha) = CURDATE()";
 $resultado = $conexion->query($sql_citas_hoy);
 $citas_hoy = ($resultado->fetch_assoc()['total']) ?? 0;
 
-// KPI 2: Total de pacientes registrados
 $sql_total_pacientes = "SELECT COUNT(RUT) AS total FROM Paciente";
 $resultado = $conexion->query($sql_total_pacientes);
 $total_pacientes = ($resultado->fetch_assoc()['total']) ?? 0;
 
-// KPI 3: Total de atenciones en el mes actual
 $sql_atenciones_mes = "SELECT COUNT(ID_Atencion) AS total FROM Atencion WHERE MONTH(Fecha) = MONTH(CURDATE()) AND YEAR(Fecha) = YEAR(CURDATE())";
 $resultado = $conexion->query($sql_atenciones_mes);
 $atenciones_mes = ($resultado->fetch_assoc()['total']) ?? 0;
 
-// KPI 4: Ingresos totales del mes actual
 $sql_ingresos_mes = "
     SELECT SUM(t.Valor) AS total
     FROM Atencion AS a
@@ -30,7 +23,6 @@ $sql_ingresos_mes = "
 $resultado = $conexion->query($sql_ingresos_mes);
 $ingresos_mes = ($resultado->fetch_assoc()['total']) ?? 0;
 
-// --- Lista de Próximas Atenciones (3 más cercanas) ---
 $sql_proximas_citas = "
     SELECT
         a.Fecha,
@@ -46,12 +38,10 @@ $sql_proximas_citas = "
 ";
 $proximas_citas = $conexion->query($sql_proximas_citas);
 
-
-// --- Lista de Tratamientos (Servicios) ---
 $sql_tratamientos = "SELECT Nombre, Valor FROM Tratamiento ORDER BY Valor DESC LIMIT 3";
 $lista_tratamientos = $conexion->query($sql_tratamientos);
 
-// --- Datos para el Gráfico (Atenciones por Tratamiento) ---
+// Datos para el Gráfico (Atenciones por Tratamiento)
 $sql_chart = "
     SELECT
         t.Nombre,
@@ -97,7 +87,7 @@ $chart_data_json = json_encode($chart_data);
             <nav class="sidebar-nav">
                 <ul>
                     <li class="nav-item active">
-                        <a href="#" class="nav-link"> <!-- Enlace al dashboard actual -->
+                        <a href="#" class="nav-link">
                             <i class="fas fa-chart-pie"></i>
                             <span>Dashboard</span>
                         </a>
@@ -109,13 +99,13 @@ $chart_data_json = json_encode($chart_data);
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a href="pacientes/listar_pacientes.php" class="nav-link"> <!-- Asumiendo una ruta futura -->
+                        <a href="pacientes/listar_pacientes.php" class="nav-link">
                             <i class="fas fa-users"></i>
                             <span>Pacientes</span>
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a href="tratamientos/listar_tratamientos.php" class="nav-link"> <!-- Asumiendo una ruta futura -->
+                        <a href="tratamientos/listar_tratamientos.php" class="nav-link">
                             <i class="fas fa-tooth"></i>
                             <span>Tratamientos</span>
                         </a>
@@ -135,10 +125,7 @@ $chart_data_json = json_encode($chart_data);
                 </ul>
             </nav>
         </aside>
-
-        <!-- Main Content -->
         <main class="main-content">
-            <!-- Header -->
             <header class="header">
                 <div class="header-left">
                     <h1>Dashboard</h1>
@@ -150,10 +137,7 @@ $chart_data_json = json_encode($chart_data);
                     </div>
                 </div>
             </header>
-
-            <!-- Dashboard Content -->
             <div class="dashboard-content">
-                <!-- Stats Cards -->
                 <div class="stats-grid">
                     <div class="stat-card">
                         <div class="stat-icon"><i class="fas fa-calendar-check"></i></div>
@@ -187,10 +171,7 @@ $chart_data_json = json_encode($chart_data);
                         </div>
                     </div>
                 </div>
-
-                <!-- Charts and Tables Row -->
                 <div class="content-row">
-                    <!-- Appointments Chart -->
                     <div class="card chart-card">
                         <div class="card-header">
                             <h3>Atenciones por Tratamiento</h3>
@@ -199,8 +180,6 @@ $chart_data_json = json_encode($chart_data);
                             <canvas id="servicesChart"></canvas>
                         </div>
                     </div>
-
-                    <!-- Recent Appointments -->
                     <div class="card appointments-card">
                         <div class="card-header">
                             <h3>Próximas Atenciones</h3>
@@ -230,8 +209,6 @@ $chart_data_json = json_encode($chart_data);
                         </div>
                     </div>
                 </div>
-
-                <!-- Services Overview -->
                 <div class="card services-overview">
                     <div class="card-header">
                         <h3>Resumen de Tratamientos</h3>
@@ -255,19 +232,18 @@ $chart_data_json = json_encode($chart_data);
             </div>
         </main>
     </div>
-
     <script>
-        // Script para inicializar el gráfico de Chart.js
+        // Script para el gráfico de Chart
         const ctx = document.getElementById('servicesChart');
         if (ctx) {
             new Chart(ctx, {
-                type: 'doughnut', // Tipo de gráfico: dona
+                type: 'doughnut',
                 data: {
                     labels: <?php echo $chart_labels_json; ?>,
                     datasets: [{
                         label: 'Cantidad de Atenciones',
                         data: <?php echo $chart_data_json; ?>,
-                        backgroundColor: [ // Colores para cada sección del gráfico
+                        backgroundColor: [
                             '#667eea',
                             '#f093fb',
                             '#4facfe',
@@ -297,6 +273,5 @@ $chart_data_json = json_encode($chart_data);
 </body>
 </html>
 <?php
-// Cerrar la conexión
 $conexion->close();
 ?>

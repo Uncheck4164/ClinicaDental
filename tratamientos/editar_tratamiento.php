@@ -1,7 +1,6 @@
 <?php
 require_once '../conexion.php';
 
-// 2. Validar que se recibió un ID
 if (!isset($_GET['id_tratamiento'])) {
     header('Location: listar_tratamientos.php');
     exit();
@@ -22,7 +21,6 @@ if ($resultado->num_rows === 0) {
 $tratamiento = $resultado->fetch_assoc();
 $stmt->close();
 
-// 4. CONSULTA 2: Obtener TODOS los especialistas para el menú desplegable
 $sql_especialistas = "SELECT ID_Especialista, Nombre FROM Especialista ORDER BY Nombre ASC";
 $resultado_especialistas = $conexion->query($sql_especialistas);
 
@@ -33,7 +31,6 @@ $resultado_especialistas = $conexion->query($sql_especialistas);
 <head>
     <meta charset="UTF-8">
     <title>Editar Tratamiento</title>
-    <!-- Reutiliza los mismos estilos que ya tienes -->
     <style>
         body { font-family: sans-serif; line-height: 1.6; }
         form { max-width: 500px; margin: 20px auto; padding: 20px; border: 1px solid #ccc; border-radius: 8px; }
@@ -48,7 +45,6 @@ $resultado_especialistas = $conexion->query($sql_especialistas);
 
     <form action="actualizar_tratamiento.php" method="POST">
         
-        <!-- Campo oculto para enviar el ID del tratamiento que estamos editando -->
         <input type="hidden" name="id_tratamiento" value="<?php echo htmlspecialchars($tratamiento['ID_Tratamiento']); ?>">
 
         <label for="nombre">Nombre del Tratamiento:</label>
@@ -63,7 +59,6 @@ $resultado_especialistas = $conexion->query($sql_especialistas);
             <?php
             if ($resultado_especialistas->num_rows > 0) {
                 while($especialista = $resultado_especialistas->fetch_assoc()) {
-                    // Lógica para pre-seleccionar el especialista actual del tratamiento
                     $selected = ($especialista['ID_Especialista'] == $tratamiento['ID_Especialista']) ? 'selected' : '';
                     echo "<option value='" . htmlspecialchars($especialista['ID_Especialista']) . "' $selected>" . htmlspecialchars($especialista['Nombre']) . "</option>";
                 }
