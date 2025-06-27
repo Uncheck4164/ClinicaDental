@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nuevo metodo de Pago</title>
+    <style>
+        body { font-family: sans-serif; line-height: 1.6; }
+        form { max-width: 500px; margin: 20px auto; padding: 20px; border: 1px solid #ccc; border-radius: 8px; }
+        label { display: block; margin-bottom: 5px; font-weight: bold; }
+        input[type="text"], input[type="email"] { width: 100%; padding: 8px; margin-bottom: 15px; border: 1px solid #ccc; border-radius: 4px; }
+        input[type="submit"] { background-color: #007bff; color: white; padding: 10px 15px; border: none; border-radius: 4px; cursor: pointer; }
+        input[type="submit"]:hover { background-color: #0056b3; }
+    </style>
+</head>
+<body>
+
+    <h1>Registrar Nuevo metodo de Pago</h1>
+
+    <form action="guardar_pago.php" method="POST">  
+        
+        <label for="descripcion">Descripcion del metodo de Pago:</label>
+        <input type="text" id="descripcion" name="descripcion" required>
+        
+        <input type="submit" value="Guardar ">
+    </form>
+
+</body>
+</html>
